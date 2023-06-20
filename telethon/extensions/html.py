@@ -13,7 +13,7 @@ from ..tl.types import (
     MessageEntityBold, MessageEntityItalic, MessageEntityCode,
     MessageEntityPre, MessageEntityEmail, MessageEntityUrl,
     MessageEntityTextUrl, MessageEntityMentionName,
-    MessageEntityUnderline, MessageEntityStrike, MessageEntityBlockquote,
+    MessageEntityUnderline, MessageEntityStrike, MessageEntityBlockquote, MessageEntitySpoiler,
     TypeMessageEntity
 )
 
@@ -40,10 +40,12 @@ class HTMLToTelegramParser(HTMLParser):
             EntityType = MessageEntityItalic
         elif tag == 'u':
             EntityType = MessageEntityUnderline
-        elif tag == 'del' or tag == 's':
+        elif tag in ['del', 's', 'strike']:
             EntityType = MessageEntityStrike
         elif tag == 'blockquote':
             EntityType = MessageEntityBlockquote
+        elif tag == 'spoiler':
+            EntityType = MessageEntitySpoiler
         elif tag == 'code':
             try:
                 # If we're in the middle of a <pre> tag, this <code> tag is
@@ -130,6 +132,7 @@ def parse(html: str) -> Tuple[str, List[TypeMessageEntity]]:
 ENTITY_TO_FORMATTER = {
     MessageEntityBold: ('<strong>', '</strong>'),
     MessageEntityItalic: ('<em>', '</em>'),
+    MessageEntitySpoiler: ('<spoiler>', '</spoiler>'),
     MessageEntityCode: ('<code>', '</code>'),
     MessageEntityUnderline: ('<u>', '</u>'),
     MessageEntityStrike: ('<del>', '</del>'),
