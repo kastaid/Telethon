@@ -246,8 +246,7 @@ class Sender:
             self._reading = True
             await self._do_read()
             self._reading = False
-
-        if not self._step_done.is_set():
+        else:
             await self._step_done.wait()
 
     def pop_updates(self) -> list[Updates]:
@@ -271,12 +270,6 @@ class Sender:
             self._step_done.set()
 
     async def _do_write(self) -> None:
-        self._step_done.clear()
-        await self._try_fill_write()
-        self._try_timeout_ping()
-        self._step_done.set()
-
-    async def _try_fill_write(self) -> None:
         if not self._requests:
             return
 
